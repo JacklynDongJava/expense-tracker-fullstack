@@ -1,6 +1,7 @@
 package com.example.expense_backend.service;
 
 import com.example.expense_backend.dto.CreateExpenseRequest;
+import com.example.expense_backend.dto.DecisionRequest;
 import com.example.expense_backend.dto.ExpenseResponse;
 import com.example.expense_backend.entity.Expense;
 import com.example.expense_backend.entity.User;
@@ -46,6 +47,54 @@ public class ExpenseService {
                 .toList();
     }
 
+    public List<ExpenseResponse> getPendingExpensesForManager(CurrentUser currentUser) {
+        return expenseRepository.findByApproverIdAndTenantIdAndStatus(
+                        currentUser.getUserId(),
+                        currentUser.getTenantId(),
+                        ExpenseStatus.PENDING
+                )
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public ExpenseResponse approveExpense(Long expenseId, DecisionRequest request, CurrentUser currentUser) {
+        Expense expense = getPendingExpenseForManager(expenseId, currentUser);
+
+        expense.setStatus(ExpenseStatus.APPROVED);
+        expense.setDecisionComment(request.comment());
+        expense.setDecidedAt(LocalDateTime.now());
+
+        Expense saved = expenseRepository.save(expense);
+        return toResponse(saved);
+    }
+
+    public ExpenseResponse rejectExpense(Long expenseId, DecisionRequest request, CurrentUser currentUser) {
+        Expense expense = getPendingExpenseForManager(expenseId, currentUser);
+
+        expense.setStatus(ExpenseStatus.REJECTED);
+        expense.setDecisionComment(request.comment());
+        expense.setDecidedAt(LocalDateTime.now());
+
+        Expense saved = expenseRepository.save(expense);
+        return toResponse(saved);
+    }
+
+    private Expense getPendingExpenseForManager(Long expenseId, CurrentUser currentUser) {
+        Expense expense = expenseRepository.findByIdAndTenantId(expenseId, currentUser.getTenantId())
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        if (expense.getApprover() == null || !expense.getApprover().getId().equals(currentUser.getUserId())) {
+            throw new RuntimeException("You are not allowed to review this expense");
+        }
+
+        if (expense.getStatus() != ExpenseStatus.PENDING) {
+            throw new RuntimeException("Expense is not pending");
+        }
+
+        return expense;
+    }
+
     private ExpenseResponse toResponse(Expense expense) {
         return new ExpenseResponse(
                 expense.getId(),
@@ -53,6 +102,8 @@ public class ExpenseService {
                 expense.getCategory(),
                 expense.getNotes(),
                 expense.getStatus(),
+                expense.getDecisionComment(),
+                expense.getDecidedAt(),
                 expense.getCreatedAt()
         );
     }

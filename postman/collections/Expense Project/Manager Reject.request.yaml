@@ -1,0 +1,5 @@
+$kind: http-request
+name: Manager Reject
+url: http://localhost:8080/api/manager/expenses/2/reject
+method: POST
+order: 4503599591317333

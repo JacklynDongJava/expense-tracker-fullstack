@@ -23,20 +23,26 @@ public class AuthService {
     private final JwtService jwtService;
 
     public AuthResponse signup(SignupRequest request) {
-        Organization organization = organizationRepository.findByName(request.getOrganizationName())
+        Organization organization = organizationRepository.findByName(request.organizationName())
                 .orElseGet(() -> {
                     Organization org = new Organization();
-                    org.setName(request.getOrganizationName());
+                    org.setName(request.organizationName());
                     return organizationRepository.save(org);
                 });
 
         User user = new User();
         user.setOrganization(organization);
         user.setTenantId(organization.getId());
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole() == null ? Role.EMPLOYEE : request.getRole());
+        user.setFullName(request.fullName());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setRole(request.role() == null ? Role.EMPLOYEE : request.role());
+
+        if (request.managerId() != null) {
+            User manager = userRepository.findByIdAndTenantId(request.managerId(), organization.getId())
+                    .orElseThrow(() -> new RuntimeException("Manager not found"));
+            user.setManager(manager);
+        }
 
         User saved = userRepository.save(user);
         String token = jwtService.generateToken(saved);

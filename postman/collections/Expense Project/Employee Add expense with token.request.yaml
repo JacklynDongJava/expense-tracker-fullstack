@@ -1,0 +1,18 @@
+$kind: http-request
+name: Employee Add expense with token
+url: http://localhost:8080/api/expenses
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "amount": 120.50,
+      "category": "Travel",
+      "notes": "Uber from airport"
+    }
+auth:
+  credentials:
+    - key: token
+      value: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYWNrbHluQGV4YW1wbGUuY29tIiwidXNlcklkIjoxLCJ0ZW5hbnRJZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc1MTEzNTc2LCJleHAiOjE3NzUxMTcxNzZ9.2QToyIVwM9Dxjkw2wxZwKPWuZWQkjl4BAHs6c_vsbEA
+  type: bearer
+order: 4474666329521828

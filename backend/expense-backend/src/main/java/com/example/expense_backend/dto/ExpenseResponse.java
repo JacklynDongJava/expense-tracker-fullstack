@@ -11,6 +11,8 @@ public record ExpenseResponse(
         String category,
         String notes,
         ExpenseStatus status,
+        String decisionComment,
+        LocalDateTime decidedAt,
         LocalDateTime createdAt
 ) {
 }

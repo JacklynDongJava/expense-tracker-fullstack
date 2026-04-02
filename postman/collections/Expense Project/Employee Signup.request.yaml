@@ -1,5 +1,5 @@
 $kind: http-request
-name: http://localhost:8080/api/auth/signup
+name: Employee Signup
 url: http://localhost:8080/api/auth/signup
 method: POST
 body:
@@ -7,9 +7,10 @@ body:
   content: |-
     {
       "organizationName": "GoodCompany",
-      "fullName": "Jacklyn",
-      "email": "jacklyn@example.com",
+      "fullName": "Employee",
+      "email": "employee@example.com",
       "password": "123456",
-      "role": "ADMIN"
+      "role": "EMPLOYEE",
+      "managerId": 1
     }
-order: 2123536135191670
+order: 4503555986576359

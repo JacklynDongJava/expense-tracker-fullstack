@@ -1,0 +1,15 @@
+$kind: http-request
+name: Manager Signup
+url: http://localhost:8080/api/auth/signup
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "organizationName": "GoodCompany",
+      "fullName": "Manager One",
+      "email": "manager@example.com",
+      "password": "123456",
+      "role": "MANAGER"
+    }
+order: 4500677168759110

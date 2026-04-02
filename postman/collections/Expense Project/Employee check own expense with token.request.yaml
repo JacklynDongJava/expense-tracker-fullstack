@@ -1,0 +1,13 @@
+$kind: http-request
+name: Employee check own expense with token
+url: http://localhost:8080/api/expenses/me
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  credentials:
+    - key: token
+      value: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYWNrbHluQGV4YW1wbGUuY29tIiwidXNlcklkIjoxLCJ0ZW5hbnRJZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc1MTEzNTc2LCJleHAiOjE3NzUxMTcxNzZ9.2QToyIVwM9Dxjkw2wxZwKPWuZWQkjl4BAHs6c_vsbEA
+  type: bearer
+order: 4497110164649681

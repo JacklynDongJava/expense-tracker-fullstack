@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://localhost:8080/api/auth/login
+method: POST
+body:
+  type: json
+  content: ""
+order: 4503239136703521

@@ -1,6 +1,7 @@
 package com.example.expense_backend.repository;
 
 import com.example.expense_backend.entity.Expense;
+import com.example.expense_backend.enums.ExpenseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     Optional<Expense> findByIdAndTenantId(Long id, Long tenantId);
 
-    List<Expense> findByApproverIdAndTenantIdAndStatus(Long approverId, Long tenantId, com.example.expense_backend.enums.ExpenseStatus status);
+    List<Expense> findByApproverIdAndTenantIdAndStatus(Long approverId, Long tenantId, ExpenseStatus status);
 }

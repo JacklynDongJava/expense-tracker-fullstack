@@ -1,0 +1,5 @@
+$kind: http-request
+name: ManagerApprove
+url: /api/manager/expenses/1/approve
+method: POST
+order: 4503599535445245

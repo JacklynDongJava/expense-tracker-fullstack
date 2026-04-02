@@ -1,5 +1,5 @@
 $kind: http-request
-name: http://localhost:8080/api/auth/login
+name: Admin Login
 url: http://localhost:8080/api/auth/login
 method: POST
 body:
