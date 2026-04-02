@@ -4,6 +4,7 @@ import type {
     DecisionRequest,
     ExpenseResponse,
     LoginRequest,
+    SignupRequest,
     UserInfoResponse,
 } from "./types";
 
@@ -17,11 +18,27 @@ function getAuthHeaders(token: string) {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
+    const text = await response.text();
+
     if (!response.ok) {
-        const text = await response.text();
         throw new Error(text || `Request failed: ${response.status}`);
     }
-    return response.json();
+
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        throw new Error("Invalid JSON response: " + text);
+    }
+}
+
+export async function signup(data: SignupRequest): Promise<AuthResponse> {
+    const response = await fetch(`${BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    return handleResponse<AuthResponse>(response);
 }
 
 export async function login(data: LoginRequest): Promise<AuthResponse> {

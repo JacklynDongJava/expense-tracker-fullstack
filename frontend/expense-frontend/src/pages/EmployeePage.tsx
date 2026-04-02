@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { createExpense, getMyExpenses } from "../api";
-import type { ExpenseResponse } from "../types";
+import type { ExpenseResponse, UserInfoResponse } from "../types";
+import UserInfoCard from "../components/UserInfoCard";
 
 interface Props {
     token: string;
+    user: UserInfoResponse;
     onLogout: () => void;
 }
 
-export default function EmployeePage({ token, onLogout }: Props) {
+export default function EmployeePage({ token, user, onLogout }: Props) {
     const [amount, setAmount] = useState("");
     const [category, setCategory] = useState("");
     const [notes, setNotes] = useState("");
@@ -30,6 +32,11 @@ export default function EmployeePage({ token, onLogout }: Props) {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
+
+        if (!amount || !category) {
+            setError("Amount and category are required");
+            return;
+        }
 
         try {
             await createExpense(token, {
@@ -54,7 +61,12 @@ export default function EmployeePage({ token, onLogout }: Props) {
                 <button onClick={onLogout}>Logout</button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12, maxWidth: 400 }}>
+            <UserInfoCard user={user} />
+
+            <form
+                onSubmit={handleSubmit}
+                style={{ display: "grid", gap: 12, maxWidth: 400 }}
+            >
                 <input
                     placeholder="Amount"
                     value={amount}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import EmployeePage from "./pages/EmployeePage";
 import ManagerPage from "./pages/ManagerPage";
 import AdminPage from "./pages/AdminPage";
@@ -13,8 +14,9 @@ function App() {
     const raw = localStorage.getItem("user");
     return raw ? JSON.parse(raw) : null;
   });
+  const [mode, setMode] = useState<"login" | "signup">("login");
 
-  function handleLoginSuccess(newToken: string, newUser: UserInfoResponse) {
+  function handleAuthSuccess(newToken: string, newUser: UserInfoResponse) {
     setToken(newToken);
     setUser(newUser);
   }
@@ -24,21 +26,36 @@ function App() {
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
+    setMode("login");
   }
 
   if (!token || !user) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+    if (mode === "signup") {
+      return (
+          <SignupPage
+              onSignupSuccess={handleAuthSuccess}
+              onGoToLogin={() => setMode("login")}
+          />
+      );
+    }
+
+    return (
+        <LoginPage
+            onLoginSuccess={handleAuthSuccess}
+            onGoToSignup={() => setMode("signup")}
+        />
+    );
   }
 
   if (user.role === "EMPLOYEE") {
-    return <EmployeePage token={token} onLogout={handleLogout} />;
+    return <EmployeePage token={token} user={user} onLogout={handleLogout} />;
   }
 
   if (user.role === "MANAGER") {
-    return <ManagerPage token={token} onLogout={handleLogout} />;
+    return <ManagerPage token={token} user={user} onLogout={handleLogout} />;
   }
 
-  return <AdminPage onLogout={handleLogout} />;
+  return <AdminPage user={user} onLogout={handleLogout} />;
 }
 
 export default App;

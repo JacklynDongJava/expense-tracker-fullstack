@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { approveExpense, getPendingExpenses, rejectExpense } from "../api";
-import type { ExpenseResponse } from "../types";
+import type { ExpenseResponse, UserInfoResponse } from "../types";
+import UserInfoCard from "../components/UserInfoCard";
 
 interface Props {
     token: string;
+    user: UserInfoResponse;
     onLogout: () => void;
 }
 
-export default function ManagerPage({ token, onLogout }: Props) {
+export default function ManagerPage({ token, user, onLogout }: Props) {
     const [expenses, setExpenses] = useState<ExpenseResponse[]>([]);
     const [commentMap, setCommentMap] = useState<Record<number, string>>({});
     const [error, setError] = useState("");
@@ -38,9 +40,13 @@ export default function ManagerPage({ token, onLogout }: Props) {
 
     async function handleReject(id: number) {
         try {
-            await rejectExpense(token, id, {
-                comment: commentMap[id] || "Rejected",
-            });
+            const comment = commentMap[id] || "";
+            if (!comment.trim()) {
+                setError("Reject requires a comment");
+                return;
+            }
+
+            await rejectExpense(token, id, { comment });
             await loadPending();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Reject failed");
@@ -53,6 +59,8 @@ export default function ManagerPage({ token, onLogout }: Props) {
                 <h2>Manager Dashboard</h2>
                 <button onClick={onLogout}>Logout</button>
             </div>
+
+            <UserInfoCard user={user} />
 
             {error && <p style={{ color: "red" }}>{error}</p>}
 

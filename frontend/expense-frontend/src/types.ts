@@ -16,6 +16,15 @@ export interface UserInfoResponse {
     role: Role;
 }
 
+export interface SignupRequest {
+    organizationName: string;
+    fullName: string;
+    email: string;
+    password: string;
+    role: Role;
+    managerId?: number;
+}
+
 export interface CreateExpenseRequest {
     amount: number;
     category: string;
