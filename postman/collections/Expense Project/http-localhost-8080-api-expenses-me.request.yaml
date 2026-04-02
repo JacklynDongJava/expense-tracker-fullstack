@@ -1,0 +1,12 @@
+$kind: http-request
+name: http://localhost:8080/api/expenses/me
+url: http://localhost:8080/api/expenses/me
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYWNrbHluQGV4YW1wbGUuY29tIiwidXNlcklkIjoxLCJ0ZW5hbnRJZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc1MTEzNTc2LCJleHAiOjE3NzUxMTcxNzZ9.2QToyIVwM9Dxjkw2wxZwKPWuZWQkjl4BAHs6c_vsbEA
+order: 4497110164649681
