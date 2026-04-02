@@ -1,100 +1,152 @@
 # Multi-Tenant Expense Tracker
 
-A full-stack expense management system where employees submit expenses and managers approve or reject them, with strict organization-level data isolation.
+## 🎯 Overview
+
+This project is a full-stack expense management system where:
+
+* Employees submit expenses
+* Managers approve or reject them
+* Data is isolated at the organization (tenant) level
+
+The goal of this project is to demonstrate:
+
+* Multi-tenancy design
+* Authentication and authorization
+* Role-based workflows
+* End-to-end full-stack implementation
 
 ---
 
-## 🚀 Tech Stack
+## ⏱️ Scope & Design Approach
+
+Given the time constraints of this assignment, I focused on building:
+
+* A clean and functional end-to-end system
+* Core features including authentication, multi-tenancy, and approval workflows
+* A simple but extensible architecture
+
+The system is intentionally designed to be **easy to understand and extend**, rather than overly complex.
+
+---
+
+## 🏗️ Architecture
+
+### Frontend
+
+* React + TypeScript
+* Communicates with backend via REST APIs
 
 ### Backend
-- Java 17
-- Spring Boot
-- Spring Security (JWT)
-- JPA / Hibernate
-- H2 (for demo)
 
-### Frontend
-- React
-- TypeScript
-- Vite
+* Java + Spring Boot
+* Spring Security (JWT-based authentication)
+* JPA / Hibernate
+
+### Database
+
+* Relational database (H2 for demo)
+* Shared schema with `tenant_id` column
 
 ---
 
-## ✨ Features
+## 🔐 Authentication & Authorization
 
-### Authentication & Authorization
-- JWT-based authentication
-- Stateless backend (no sessions)
-- Role-based access control (RBAC)
-  - EMPLOYEE
-  - MANAGER
-  - ADMIN
+* JWT-based authentication (stateless)
+* Token is returned on login and sent with every request
+* Role-Based Access Control (RBAC):
+
+| Role     | Permissions                    |
+| -------- | ------------------------------ |
+| EMPLOYEE | Submit & view own expenses     |
+| MANAGER  | Approve / reject team expenses |
+| ADMIN    | Organization-level access      |
+
+---
+
+## 🧠 Multi-Tenancy Design
+
+* Shared database with `tenant_id` on all tenant-scoped tables
+* Tenant is derived from the authenticated user (JWT)
+* Enforced at:
+
+  * Security layer
+  * Service layer
+  * Repository queries
+
+👉 Ensures **strict data isolation between organizations**
+
+---
+
+## 🔄 Expense Workflow
+
+### State Machine
+
+```
+PENDING → APPROVED
+        → REJECTED
+```
+
+* Employees submit expenses
+* Managers approve or reject
+* Rejection requires a comment
+* Decision is final (no state reversal)
+
+---
+
+## 💻 Demo Flow
+
+1. Register a manager under an organization
+2. Login → receive JWT token
+3. Register an employee (linked to manager)
+4. Employee submits an expense
+5. Manager reviews and approves/rejects
+6. Employee sees final status and comments
+
+---
+
+## 🚀 Possible Improvements
+
+Based on the current implementation, the system can be extended in several ways:
 
 ### Multi-Tenancy
-- Shared database with `tenant_id`
-- All queries are scoped by tenant
-- Prevents cross-tenant data access
 
-### Expense Workflow
-- Employees can:
-  - Submit expenses
-  - View their own expenses
-- Managers can:
-  - View pending expenses from their team
-  - Approve / Reject with comments
-- Admins can:
-  - (placeholder for analytics)
+* Move to schema-per-tenant or database-per-tenant for stronger isolation
 
-### Approval System
-- State machine:
-  - PENDING → APPROVED / REJECTED
-- Reject requires comment
-- Audit fields:
-  - decisionComment
-  - decidedAt
+### Authentication
 
-### Frontend
-- Login / Signup
-- Role-based page routing
-- Employee dashboard
-- Manager approval dashboard
-- Error handling (user-friendly messages)
+* Add refresh token rotation for better security
+
+### File Handling
+
+* Support receipt uploads using S3 + pre-signed URLs
+
+### Rate Limiting
+
+* Implement per-tenant rate limiting using Redis
+
+### Workflow Enhancements
+
+* Handle manager reassignment and reassign pending approvals
+
+### Observability
+
+* Add audit logs for approvals and system actions
 
 ---
 
-## 🧠 Design Decisions
+## 📌 Summary
 
-### Multi-Tenancy Strategy
-I used a **shared database with a `tenant_id` column**.
+This project demonstrates:
 
-**Pros:**
-- Simple implementation
-- Cost-effective
-- Easy to scale for this exercise
+* Full-stack development
+* Secure multi-tenant architecture
+* JWT-based authentication
+* Role-based approval workflows
 
-**Cons:**
-- Requires strict filtering in every query
-
-**Mitigation:**
-- Tenant is extracted from JWT
-- Applied at service layer
-- Enforced in all repository queries
+The system is intentionally simple, but designed in a way that can evolve into a production-ready solution.
 
 ---
 
-### Authentication (JWT)
+## 🎥 Demo Video
 
-- Access token returned after login/signup
-- Stored in localStorage (for demo simplicity)
-- Sent via `Authorization: Bearer <token>`
-
----
-
-### RBAC
-
-Implemented using Spring Security:
-
-- `/api/admin/**` → ADMIN
-- `/api/manager/**` → MANAGER
-- `/api/expenses/**` → authenticated users
-
+(Add your screen recording link here)
